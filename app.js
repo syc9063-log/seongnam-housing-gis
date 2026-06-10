@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let geojsonLayer = null;
   let trendChartInstance = null;
   let radarChartInstance = null;
+  let viewMode = "dong"; // dong, complex
+  let selectedComplex = null;
 
   // Weights for custom calculator
   let weightRedev = 4;
@@ -48,6 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add zoom control at bottom right
   L.control.zoom({ position: "bottomright" }).addTo(map);
+
+  // Layer group for complex markers
+  const complexLayerGroup = L.layerGroup().addTo(map);
 
   // 타일 레이어 첫 로드
   updateTileLayer();
@@ -179,13 +184,14 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Highlight if selected
     const isSelected = selectedFeature && selectedFeature.properties.name === feature.properties.name;
+    const isComplexMode = viewMode === "complex";
     
     return {
       fillColor: fillColor,
-      weight: isSelected ? 3 : 1,
-      opacity: 1,
-      color: isSelected ? "var(--primary)" : "rgba(255, 255, 255, 0.25)",
-      fillOpacity: isSelected ? 0.75 : 0.5,
+      weight: isSelected ? (isComplexMode ? 1.5 : 3) : 1,
+      opacity: isComplexMode ? 0.2 : 1,
+      color: isSelected ? (isComplexMode ? "rgba(255, 255, 255, 0.4)" : "var(--primary)") : "rgba(255, 255, 255, 0.25)",
+      fillOpacity: isComplexMode ? 0.04 : (isSelected ? 0.75 : 0.5),
       dashArray: isSelected ? "" : "3"
     };
   }
@@ -257,6 +263,99 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCharts(props);
   }
 
+  // Get complex value based on housing type and metric
+  function getComplexValue(complex, metric) {
+    if (metric === "currentPrice") {
+      let baseVal = complex.metrics.currentPrice;
+      if (housingType === "villa") {
+        baseVal = baseVal * 0.45;
+      }
+      return baseVal;
+    }
+    return complex.metrics[metric];
+  }
+
+  // Select a Complex and update layout info
+  function selectComplex(complex) {
+    selectedComplex = complex;
+    
+    // Re-render markers to update selected highlight state
+    renderComplexMarkers();
+
+    // Update selection info cards
+    document.getElementById("selected-gu").innerText = complex.gu;
+    document.getElementById("selected-dong-name").innerText = complex.name;
+    document.getElementById("selected-dong-desc").innerText = complex.description;
+
+    // Update Future Outlook score meter
+    const outlookVal = getComplexValue(complex, "futureOutlook");
+    document.getElementById("outlook-score-num").innerText = `${Math.round(outlookVal)}점`;
+    document.getElementById("outlook-score-bar").style.width = `${outlookVal}%`;
+
+    // Refresh charts
+    updateCharts(complex);
+  }
+
+  // Render the detailed complex markers on map
+  function renderComplexMarkers() {
+    // Clear existing markers first
+    complexLayerGroup.clearLayers();
+
+    if (viewMode !== "complex") return;
+
+    // Filter complexes by selected Gu
+    const guFilter = document.getElementById("gu-filter").value;
+    const filteredComplexes = seongnamApartmentData.filter(c => {
+      if (guFilter === "all") return true;
+      return c.gu === guFilter;
+    });
+
+    filteredComplexes.forEach(c => {
+      const value = getComplexValue(c, activeMetric);
+      const color = getColor(value, activeMetric);
+      
+      const isSelected = selectedComplex && selectedComplex.name === c.name;
+
+      // Custom marker icon HTML (sleek pulsing effect)
+      const markerHtml = `
+        <div class="custom-marker-container ${isSelected ? 'selected' : ''}" style="color: ${color};">
+          <div class="marker-pulse" style="background-color: ${color};"></div>
+          <div class="marker-dot" style="background-color: ${color};"></div>
+        </div>
+      `;
+
+      const customIcon = L.divIcon({
+        html: markerHtml,
+        className: '', // Clear default styling
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      const marker = L.marker(c.coords, { icon: customIcon });
+
+      // Add detailed custom tooltip
+      const unit = activeMetric === "currentPrice" ? "억 원" : "점";
+      const content = `
+        <div class="custom-map-popup">
+          <h4>${c.name}</h4>
+          <p>${c.dong} · ${c.gu}</p>
+          <div class="popup-stat">
+            <span>${legends[activeMetric].title.split(" (")[0]}:</span>
+            <span>${value.toFixed(1)}${unit}</span>
+          </div>
+        </div>
+      `;
+      marker.bindTooltip(content, { sticky: true, className: "glass-panel" });
+
+      // Map click handler
+      marker.on("click", () => {
+        selectComplex(c);
+      });
+
+      complexLayerGroup.addLayer(marker);
+    });
+  }
+
   // Render the GeoJSON layer on map
   function renderGeoJSON() {
     if (geojsonLayer) {
@@ -286,14 +385,32 @@ document.addEventListener("DOMContentLoaded", () => {
       map.fitBounds(bounds, { padding: [30, 30] });
     }
 
-    // Auto-select first matching neighborhood if none selected or if selected one is filtered out
-    const stillExists = filteredFeatures.some(f => selectedFeature && f.properties.name === selectedFeature.properties.name);
-    if (!stillExists && filteredFeatures.length > 0) {
-      selectDong(filteredFeatures[0]);
-    } else if (selectedFeature) {
-      // Find the updated feature to refresh data
-      const updated = filteredFeatures.find(f => f.properties.name === selectedFeature.properties.name);
-      if (updated) selectDong(updated);
+    // Re-render complex markers
+    renderComplexMarkers();
+
+    // Auto-select based on View Mode
+    if (viewMode === "complex") {
+      const filteredComplexes = seongnamApartmentData.filter(c => {
+        if (guFilter === "all") return true;
+        return c.gu === guFilter;
+      });
+      const complexExists = filteredComplexes.some(c => selectedComplex && c.name === selectedComplex.name);
+      if (!complexExists && filteredComplexes.length > 0) {
+        selectComplex(filteredComplexes[0]);
+      } else if (selectedComplex) {
+        const updated = filteredComplexes.find(c => c.name === selectedComplex.name);
+        if (updated) selectComplex(updated);
+      }
+    } else {
+      // Auto-select first matching neighborhood if none selected or if selected one is filtered out
+      const stillExists = filteredFeatures.some(f => selectedFeature && f.properties.name === selectedFeature.properties.name);
+      if (!stillExists && filteredFeatures.length > 0) {
+        selectDong(filteredFeatures[0]);
+      } else if (selectedFeature) {
+        // Find the updated feature to refresh data
+        const updated = filteredFeatures.find(f => f.properties.name === selectedFeature.properties.name);
+        if (updated) selectDong(updated);
+      }
     }
   }
 
@@ -406,9 +523,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Interaction Listeners ---
 
+  // View Mode Selector (Dong vs Complex)
+  const viewModeRadios = document.querySelectorAll('input[name="view-mode"]');
+  viewModeRadios.forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      viewMode = e.target.value;
+      
+      // Update top stats header text labels
+      updateTopStats();
+
+      if (viewMode === "dong") {
+        complexLayerGroup.clearLayers();
+        selectedComplex = null;
+        
+        // Restore Dong selection display
+        if (selectedFeature) {
+          selectDong(selectedFeature);
+        }
+      } else {
+        // Auto-select first complex in the filtered list
+        const guFilter = document.getElementById("gu-filter").value;
+        const filteredComplexes = seongnamApartmentData.filter(c => {
+          if (guFilter === "all") return true;
+          return c.gu === guFilter;
+        });
+        if (filteredComplexes.length > 0) {
+          selectComplex(filteredComplexes[0]);
+        }
+      }
+      
+      // Update geojson polygon opacity
+      geojsonLayer.eachLayer(layer => {
+        geojsonLayer.resetStyle(layer);
+      });
+
+      // Render complex markers
+      renderComplexMarkers();
+      updateLegend();
+    });
+  });
+
   // Gu Filter Change
   document.getElementById("gu-filter").addEventListener("change", () => {
     renderGeoJSON();
+    updateTopStats();
   });
 
   // Metric Buttons Navigation
@@ -430,10 +588,16 @@ document.addEventListener("DOMContentLoaded", () => {
       geojsonLayer.eachLayer(layer => {
         geojsonLayer.resetStyle(layer);
       });
+      
+      // Re-render complex markers (change colors)
+      renderComplexMarkers();
+      
       updateLegend();
 
-      // If a dong is currently selected, refresh charts to focus on active metric popup
-      if (selectedFeature) {
+      // Refresh charts
+      if (viewMode === "complex" && selectedComplex) {
+        selectComplex(selectedComplex);
+      } else if (selectedFeature) {
         selectDong(selectedFeature);
       }
     });
@@ -452,9 +616,15 @@ document.addEventListener("DOMContentLoaded", () => {
       geojsonLayer.eachLayer(layer => {
         geojsonLayer.resetStyle(layer);
       });
+      
+      // Re-render complex markers
+      renderComplexMarkers();
+      
       updateLegend();
 
-      if (selectedFeature) {
+      if (viewMode === "complex" && selectedComplex) {
+        selectComplex(selectedComplex);
+      } else if (selectedFeature) {
         selectDong(selectedFeature);
       }
     });
@@ -498,28 +668,63 @@ document.addEventListener("DOMContentLoaded", () => {
     let topOutlookName = "";
     let topOutlookVal = 0;
 
-    seongnamGeoJSON.features.forEach(f => {
-      const p = f.properties;
-      const currentPrice = getFeatureValue(p, "currentPrice");
-      const outlook = getFeatureValue(p, "futureOutlook");
-      
-      // Calculate growth from 2016 to 2026
-      const price2016 = p.prices["2016"] * (housingType === "apartment" ? 1.0 : 0.45);
-      const risePercent = ((currentPrice - price2016) / price2016) * 100;
+    const cards = document.querySelectorAll(".top-stats .stat-card");
+    if (cards.length >= 3) {
+      if (viewMode === "complex") {
+        cards[0].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-crown text-gold"></i> 최고 시세 단지';
+        cards[1].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-chart-line text-cyan"></i> 10개년 최대 상승 단지';
+        cards[2].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-bolt text-amber"></i> 미래 전망 1순위 단지';
 
-      if (currentPrice > topPriceVal) {
-        topPriceVal = currentPrice;
-        topPriceName = p.name.split(" ")[0];
+        seongnamApartmentData.forEach(c => {
+          const currentPrice = getComplexValue(c, "currentPrice");
+          const outlook = getComplexValue(c, "futureOutlook");
+          
+          // Calculate growth from 2016 to 2026
+          const price2016 = c.prices["2016"] * (housingType === "apartment" ? 1.0 : 0.45);
+          const risePercent = ((currentPrice - price2016) / price2016) * 100;
+
+          if (currentPrice > topPriceVal) {
+            topPriceVal = currentPrice;
+            topPriceName = c.name;
+          }
+          if (risePercent > maxRiseVal) {
+            maxRiseVal = risePercent;
+            maxRiseName = c.name;
+          }
+          if (outlook > topOutlookVal) {
+            topOutlookVal = outlook;
+            topOutlookName = c.name;
+          }
+        });
+      } else {
+        cards[0].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-crown text-gold"></i> 최고 시세 지역';
+        cards[1].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-chart-line text-cyan"></i> 10개년 최대 상승';
+        cards[2].querySelector(".stat-label").innerHTML = '<i class="fa-solid fa-bolt text-amber"></i> 미래 전망 1순위';
+
+        seongnamGeoJSON.features.forEach(f => {
+          const p = f.properties;
+          const currentPrice = getFeatureValue(p, "currentPrice");
+          const outlook = getFeatureValue(p, "futureOutlook");
+          
+          // Calculate growth from 2016 to 2026
+          const price2016 = p.prices["2016"] * (housingType === "apartment" ? 1.0 : 0.45);
+          const risePercent = ((currentPrice - price2016) / price2016) * 100;
+
+          if (currentPrice > topPriceVal) {
+            topPriceVal = currentPrice;
+            topPriceName = p.name.split(" ")[0];
+          }
+          if (risePercent > maxRiseVal) {
+            maxRiseVal = risePercent;
+            maxRiseName = p.name.split(" ")[0];
+          }
+          if (outlook > topOutlookVal) {
+            topOutlookVal = outlook;
+            topOutlookName = p.name.split(" ")[0];
+          }
+        });
       }
-      if (risePercent > maxRiseVal) {
-        maxRiseVal = risePercent;
-        maxRiseName = p.name.split(" ")[0];
-      }
-      if (outlook > topOutlookVal) {
-        topOutlookVal = outlook;
-        topOutlookName = p.name.split(" ")[0];
-      }
-    });
+    }
 
     document.getElementById("top-price-dong").innerText = `${topPriceName} (${topPriceVal.toFixed(1)}억)`;
     document.getElementById("top-rise-dong").innerText = `${maxRiseName} (+${Math.round(maxRiseVal)}%)`;
@@ -568,6 +773,17 @@ document.addEventListener("DOMContentLoaded", () => {
       p.metrics.futureOutlook = Math.min(100, Math.max(0, customScore));
     });
 
+    // Re-calculate futureOutlook for all complexes
+    seongnamApartmentData.forEach(c => {
+      const redev = c.metrics.redevScore;
+      const job = c.metrics.jobProx;
+      const transit = c.metrics.transitScore;
+      
+      const customScore = (redev * weightRedev + job * weightJob + transit * weightTransit) / sum;
+      
+      c.metrics.futureOutlook = Math.min(100, Math.max(0, customScore));
+    });
+
     // Notify user of update
     alert("나만의 맞춤 가중치 조합이 반영되었습니다! 미래 종합 전망 지표 레이어 및 수치가 업데이트됩니다.");
 
@@ -579,7 +795,11 @@ document.addEventListener("DOMContentLoaded", () => {
       geojsonLayer.eachLayer(layer => {
         geojsonLayer.resetStyle(layer);
       });
-      if (selectedFeature) {
+      renderComplexMarkers();
+      
+      if (viewMode === "complex" && selectedComplex) {
+        selectComplex(selectedComplex);
+      } else if (selectedFeature) {
         selectDong(selectedFeature);
       }
     }

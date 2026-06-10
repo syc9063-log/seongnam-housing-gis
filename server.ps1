@@ -1,4 +1,4 @@
-# PowerShell 기반 초경량 로컬 웹 서버 (server.ps1)
+# Lightweight Local Web Server (server.ps1)
 $port = 5173
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
@@ -6,12 +6,12 @@ $listener.Prefixes.Add("http://localhost:$port/")
 try {
     $listener.Start()
     Write-Host "=========================================" -ForegroundColor Green
-    Write-Host " 성남시 부동산 GIS 대시보드 로컬 서버 가동" -ForegroundColor Green
-    Write-Host " 접속 주소: http://localhost:$port/" -ForegroundColor Cyan
-    Write-Host " 종료하려면 이 창에서 Ctrl + C를 누르세요." -ForegroundColor Yellow
+    Write-Host " Seongnam Housing GIS Local Web Server" -ForegroundColor Green
+    Write-Host " Access URL: http://localhost:$port/" -ForegroundColor Cyan
+    Write-Host " Press Ctrl + C to stop the server" -ForegroundColor Yellow
     Write-Host "=========================================" -ForegroundColor Green
     
-    # 자동으로 브라우저 열기
+    # Auto-open browser
     Start-Process "http://localhost:$port/"
     
     while ($listener.IsListening) {
@@ -24,14 +24,14 @@ try {
             $urlPath = "/index.html"
         }
         
-        # 파일 경로 탐색 (한글 경로 인코딩 처리)
-        $decodedPath = [System.Web.HttpUtility]::UrlDecode($urlPath)
+        # URL decode path (handles non-English character routes)
+        $decodedPath = [System.Uri]::UnescapeDataString($urlPath)
         $filePath = Join-Path $PSScriptRoot $decodedPath
         
         if (Test-Path $filePath -PathType Leaf) {
             $bytes = [System.IO.File]::ReadAllBytes($filePath)
             
-            # Content-Type 헤더 지정
+            # Set content type
             if ($filePath.EndsWith(".html")) {
                 $response.ContentType = "text/html; charset=utf-8"
             } elseif ($filePath.EndsWith(".css")) {
@@ -52,7 +52,7 @@ try {
         $response.Close()
     }
 } catch {
-    Write-Host "오류 발생: $_" -ForegroundColor Red
+    Write-Host ("Error occurred: " + $_) -ForegroundColor Red
 } finally {
     $listener.Stop()
 }

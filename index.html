@@ -63,6 +63,21 @@
           <h2>검색 및 필터 제어</h2>
         </div>
 
+        <!-- View Mode Selector -->
+        <div class="control-group">
+          <label>지도 탐색 레벨</label>
+          <div class="radio-group" id="view-mode-group">
+            <label class="radio-label">
+              <input type="radio" name="view-mode" value="dong" checked>
+              <span class="custom-radio"><i class="fa-solid fa-draw-polygon"></i> 동별 영역</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="view-mode" value="complex">
+              <span class="custom-radio"><i class="fa-solid fa-location-dot"></i> 아파트 단지</span>
+            </label>
+          </div>
+        </div>
+
         <!-- Gu Selector -->
         <div class="control-group">
           <label for="gu-filter">행정구역 (구 선택)</label>
