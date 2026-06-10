@@ -1,0 +1,17 @@
+{
+  "name": "seongnam-housing-gis",
+  "version": "1.0.0",
+  "description": "성남시 부동산 GIS & 가격변동 트렌드 분석 대시보드",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}

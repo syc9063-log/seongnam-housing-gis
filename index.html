@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>성남시 부동산 GIS & 가격변동 트렌드 분석 시스템</title>
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+  <!-- CSS Style -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header glass-panel">
+      <div class="brand">
+        <i class="fa-solid fa-map-location-dot logo-icon"></i>
+        <div class="brand-text">
+          <h1>Seongnam Housing GIS</h1>
+          <p>성남시 부동산 시세 트렌드 및 미래 전망 분석 시스템</p>
+        </div>
+      </div>
+      
+      <!-- Top Stats Card (Key Highlights) -->
+      <div class="top-stats">
+        <div class="stat-card">
+          <span class="stat-label"><i class="fa-solid fa-crown text-gold"></i> 최고 시세 지역</span>
+          <span class="stat-value" id="top-price-dong">백현동 (23억)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label"><i class="fa-solid fa-chart-line text-cyan"></i> 10개년 최대 상승</span>
+          <span class="stat-value" id="top-rise-dong">삼평동 (+119%)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label"><i class="fa-solid fa-bolt text-amber"></i> 미래 전망 1순위</span>
+          <span class="stat-value" id="top-outlook-dong">정자동 (95점)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      
+      <!-- Sidebar Control Panel -->
+      <aside class="sidebar glass-panel">
+        <div class="section-title">
+          <i class="fa-solid fa-sliders"></i>
+          <h2>검색 및 필터 제어</h2>
+        </div>
+
+        <!-- Gu Selector -->
+        <div class="control-group">
+          <label for="gu-filter">행정구역 (구 선택)</label>
+          <div class="select-wrapper">
+            <select id="gu-filter">
+              <option value="all">성남시 전체</option>
+              <option value="분당구">분당구 (Bundang-gu)</option>
+              <option value="수정구">수정구 (Sujeong-gu)</option>
+              <option value="중원구">중원구 (Jungwon-gu)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- VWorld API Key Input -->
+        <div class="control-group">
+          <label for="vworld-key"><i class="fa-solid fa-key text-cyan"></i> 브이월드 API 키 연동 (선택)</label>
+          <input type="text" id="vworld-key" placeholder="API 인증키 입력 시 국토지도로 전환" style="width: 100%; padding: 0.7rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); border-radius: 10px; color: var(--text-primary); font-family: var(--font-main); font-size: 0.8rem; outline: none; transition: var(--transition-smooth);">
+          <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; line-height: 1.3;">
+            * 브이월드(vworld.kr) 회원가입 후 '오픈 API -> 인증키 발급'에서 무료 발급받아 붙여넣으시면 국토지리 정보 스타일 지도로 즉시 갱신됩니다.
+          </p>
+        </div>
+
+        <!-- Metric Layer Selector -->
+        <div class="control-group">
+          <label>분석 지표 시각화 (지도 레이어)</label>
+          <div class="metric-options">
+            <button class="metric-btn active" data-metric="currentPrice">
+              <i class="fa-solid fa-won-sign"></i>
+              <span>평균 매매 시세</span>
+            </button>
+            <button class="metric-btn" data-metric="redevScore">
+              <i class="fa-solid fa-trowel-bricks"></i>
+              <span>재건축/재개발 지수</span>
+            </button>
+            <button class="metric-btn" data-metric="jobProx">
+              <i class="fa-solid fa-briefcase"></i>
+              <span>직주근접 편의성</span>
+            </button>
+            <button class="metric-btn" data-metric="transitScore">
+              <i class="fa-solid fa-train-subway"></i>
+              <span>교통 인프라 점수</span>
+            </button>
+            <button class="metric-btn" data-metric="futureOutlook">
+              <i class="fa-solid fa-compass-drafting"></i>
+              <span>미래 종합 전망치</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Housing Type -->
+        <div class="control-group">
+          <label>주택 유형 구분</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="housing-type" value="apartment" checked>
+              <span class="custom-radio">아파트 (Apartment)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="housing-type" value="villa">
+              <span class="custom-radio">연립/다세대 빌라</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Indicator Description -->
+        <div class="info-box glass-panel-inner" id="layer-info-box">
+          <h4 id="info-title">평균 매매 시세</h4>
+          <p id="info-desc">전용면적 84㎡(국민평형 34평) 아파트 기준 최근 실거래가 평균 기준입니다. 분당구 판교 신도시 일대와 정자동, 위례신도시 등이 높은 시세를 형성하고 있습니다.</p>
+        </div>
+
+        <!-- Custom Indicator Calculator -->
+        <div class="calculator-panel glass-panel-inner">
+          <h3><i class="fa-solid fa-calculator text-cyan"></i> 맞춤 전망 지표 계산기</h3>
+          <p class="calc-help">개인 선호 가중치를 조정하여 나만의 투자/정주 여건 종합 지도를 만드세요.</p>
+          <div class="slider-group">
+            <div class="slider-item">
+              <span class="slider-label">재건축 가능성</span>
+              <input type="range" id="weight-redev" min="0" max="10" value="4">
+              <span class="weight-val" id="val-redev">40%</span>
+            </div>
+            <div class="slider-item">
+              <span class="slider-label">직장 접근성</span>
+              <input type="range" id="weight-job" min="0" max="10" value="3">
+              <span class="weight-val" id="val-job">30%</span>
+            </div>
+            <div class="slider-item">
+              <span class="slider-label">역세권/대중교통</span>
+              <input type="range" id="weight-transit" min="0" max="10" value="3">
+              <span class="weight-val" id="val-transit">30%</span>
+            </div>
+          </div>
+          <button id="apply-weights-btn" class="action-btn">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 나만의 지표 반영하기
+          </button>
+        </div>
+      </aside>
+
+      <!-- Center Map Area -->
+      <main class="map-area glass-panel">
+        <div class="map-header">
+          <div class="map-title">
+            <i class="fa-solid fa-earth-asia text-teal"></i>
+            <h2 id="current-layer-title">성남시 공간 매칭 맵</h2>
+          </div>
+          <div class="map-legend" id="legend-container">
+            <!-- Dynamic Legend generated by Javascript -->
+          </div>
+        </div>
+        <div id="map"></div>
+      </main>
+
+      <!-- Right Analytics Panel -->
+      <section class="analytics glass-panel">
+        
+        <!-- Selection Info Display -->
+        <div class="selection-display">
+          <div class="selection-header">
+            <span class="gu-tag" id="selected-gu">분당구</span>
+            <h2 id="selected-dong-name">삼평동 (동판교)</h2>
+          </div>
+          <p class="dong-desc" id="selected-dong-desc">판교테크노밸리의 중심지로 IT 기업들이 밀집한 핵심 업무지구입니다.</p>
+        </div>
+
+        <!-- 10-Year Price Trend Chart -->
+        <div class="chart-container-card">
+          <h3><i class="fa-solid fa-chart-area text-gold"></i> 10개년 매매가 변동 추이 (2016-2026)</h3>
+          <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+          </div>
+          <div class="chart-footer">
+            <span class="unit-desc">* 단위: 억 원 (전용 84㎡ 아파트 기준)</span>
+          </div>
+        </div>
+
+        <!-- Radar Chart for indicators -->
+        <div class="chart-container-card">
+          <h3><i class="fa-solid fa-chart-radar text-cyan"></i> 다차원 입지 경쟁력 분석</h3>
+          <div class="chart-wrapper">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Seongnam Real Estate Future Index Info -->
+        <div class="outlook-meter-card">
+          <div class="meter-header">
+            <h3><i class="fa-solid fa-bullseye text-amber"></i> 미래 성장 가능성 스코어</h3>
+            <span class="meter-score" id="outlook-score-num">92점</span>
+          </div>
+          <div class="meter-bar-container">
+            <div class="meter-bar-fill" id="outlook-score-bar" style="width: 92%;"></div>
+          </div>
+          <div class="meter-labels">
+            <span>주의 (50점 이하)</span>
+            <span>안정 (50~75점)</span>
+            <span>유망 (75~90점)</span>
+            <span>매우 유망 (90점 이상)</span>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Data and Application Code -->
+  <script src="seongnam_geojson.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

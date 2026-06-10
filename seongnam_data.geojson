@@ -1,0 +1,418 @@
+{
+  "type": "FeatureCollection",
+  "name": "seongnam_housing_indicators",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "삼평동 (동판교)",
+        "district": "분당구",
+        "description": "판교테크노밸리의 중심지로 IT 기업들이 밀집한 핵심 업무지구입니다.",
+        "current_price_apt_억": 21.5,
+        "redevelopment_score": 35,
+        "job_proximity_score": 98,
+        "transit_score": 95,
+        "future_outlook_score": 92,
+        "price_trend_2016": 9.8,
+        "price_trend_2018": 13.5,
+        "price_trend_2020": 17.5,
+        "price_trend_2022": 19.5,
+        "price_trend_2024": 19.8,
+        "price_trend_2026": 21.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.095, 37.410],
+          [127.115, 37.410],
+          [127.115, 37.398],
+          [127.095, 37.398],
+          [127.095, 37.410]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "백현동 (서판교/판교역)",
+        "district": "분당구",
+        "description": "판교역 남측 고급 주거 단지 및 알파돔시티, 백현마을 아파트가 위치한 성남 대표 부촌입니다.",
+        "current_price_apt_억": 23.0,
+        "redevelopment_score": 40,
+        "job_proximity_score": 95,
+        "transit_score": 96,
+        "future_outlook_score": 94,
+        "price_trend_2016": 11.0,
+        "price_trend_2018": 15.0,
+        "price_trend_2020": 19.5,
+        "price_trend_2022": 21.0,
+        "price_trend_2024": 21.5,
+        "price_trend_2026": 23.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.095, 37.398],
+          [127.115, 37.398],
+          [127.115, 37.385],
+          [127.095, 37.385],
+          [127.095, 37.398]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "정자동",
+        "district": "분당구",
+        "description": "정자역 카페거리와 초고층 주상복합이 밀집해 있으며, 분당 1기 신도시 재건축 선도지구 지정 기대감이 매우 높습니다.",
+        "current_price_apt_억": 18.5,
+        "redevelopment_score": 92,
+        "job_proximity_score": 88,
+        "transit_score": 94,
+        "future_outlook_score": 95,
+        "price_trend_2016": 8.5,
+        "price_trend_2018": 11.2,
+        "price_trend_2020": 15.5,
+        "price_trend_2022": 17.0,
+        "price_trend_2024": 17.2,
+        "price_trend_2026": 18.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.100, 37.370],
+          [127.120, 37.370],
+          [127.120, 37.350],
+          [127.100, 37.350],
+          [127.100, 37.370]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "서현동",
+        "district": "분당구",
+        "description": "분당의 전통적인 상업/교통 중심지로, 시범단지 등 1기 신도시 통합 재건축 추진의 선두주자입니다.",
+        "current_price_apt_억": 16.8,
+        "redevelopment_score": 95,
+        "job_proximity_score": 80,
+        "transit_score": 90,
+        "future_outlook_score": 93,
+        "price_trend_2016": 7.2,
+        "price_trend_2018": 9.5,
+        "price_trend_2020": 13.8,
+        "price_trend_2022": 15.0,
+        "price_trend_2024": 15.5,
+        "price_trend_2026": 16.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.120, 37.388],
+          [127.140, 37.388],
+          [127.140, 37.373],
+          [127.120, 37.373],
+          [127.120, 37.388]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "야탑동",
+        "district": "분당구",
+        "description": "성남종합버스터미널, 야탑역 중심의 편리한 인프라를 지니고 있으며 중소규모 단지들이 통합 재건축을 타진 중입니다.",
+        "current_price_apt_억": 13.5,
+        "redevelopment_score": 85,
+        "job_proximity_score": 78,
+        "transit_score": 88,
+        "future_outlook_score": 87,
+        "price_trend_2016": 6.0,
+        "price_trend_2018": 7.8,
+        "price_trend_2020": 11.2,
+        "price_trend_2022": 12.4,
+        "price_trend_2024": 12.3,
+        "price_trend_2026": 13.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.120, 37.418],
+          [127.140, 37.418],
+          [127.140, 37.403],
+          [127.120, 37.403],
+          [127.120, 37.418]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "수내동",
+        "district": "분당구",
+        "description": "중앙공원 인근의 쾌적한 주거환경과 명문 학군 프리미엄으로 재건축 동의율이 높은 지역입니다.",
+        "current_price_apt_억": 17.2,
+        "redevelopment_score": 94,
+        "job_proximity_score": 82,
+        "transit_score": 91,
+        "future_outlook_score": 94,
+        "price_trend_2016": 7.5,
+        "price_trend_2018": 9.8,
+        "price_trend_2020": 14.2,
+        "price_trend_2022": 15.5,
+        "price_trend_2024": 16.0,
+        "price_trend_2026": 17.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.115, 37.385],
+          [127.135, 37.385],
+          [127.135, 37.370],
+          [127.115, 37.370],
+          [127.115, 37.385]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "구미동",
+        "district": "분당구",
+        "description": "분당 남단에 위치하며, 서울대병원 등 인프라가 풍부하고 빌라 단지 및 리모델링/재건축 추진이 활발합니다.",
+        "current_price_apt_억": 12.0,
+        "redevelopment_score": 82,
+        "job_proximity_score": 75,
+        "transit_score": 85,
+        "future_outlook_score": 84,
+        "price_trend_2016": 5.5,
+        "price_trend_2018": 7.2,
+        "price_trend_2020": 10.0,
+        "price_trend_2022": 11.0,
+        "price_trend_2024": 11.0,
+        "price_trend_2026": 12.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.105, 37.350],
+          [127.125, 37.350],
+          [127.125, 37.332],
+          [127.105, 37.332],
+          [127.105, 37.350]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "위례동 (성남위례)",
+        "district": "수정구",
+        "description": "수정구 북동쪽의 계획도시로, 위례자이 등 신축 위주 단지와 8호선 남위례역 개통 호재를 누린 곳입니다.",
+        "current_price_apt_억": 16.5,
+        "redevelopment_score": 20,
+        "job_proximity_score": 82,
+        "transit_score": 88,
+        "future_outlook_score": 89,
+        "price_trend_2016": 8.0,
+        "price_trend_2018": 11.0,
+        "price_trend_2020": 14.8,
+        "price_trend_2022": 15.2,
+        "price_trend_2024": 15.2,
+        "price_trend_2026": 16.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.132, 37.478],
+          [127.155, 37.478],
+          [127.155, 37.458],
+          [127.132, 37.458],
+          [127.132, 37.478]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "신흥동",
+        "district": "수정구",
+        "description": "산성역 포레스티아 등 대규모 뉴타운 아파트 단지가 입주하며 구도심에서 브랜드 신축 주거타운으로 환골탈태했습니다.",
+        "current_price_apt_억": 11.5,
+        "redevelopment_score": 65,
+        "job_proximity_score": 78,
+        "transit_score": 89,
+        "future_outlook_score": 86,
+        "price_trend_2016": 4.8,
+        "price_trend_2018": 6.8,
+        "price_trend_2020": 9.8,
+        "price_trend_2022": 10.5,
+        "price_trend_2024": 10.5,
+        "price_trend_2026": 11.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.132, 37.452],
+          [127.148, 37.452],
+          [127.148, 37.438],
+          [127.132, 37.438],
+          [127.132, 37.452]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "태평동",
+        "district": "수정구",
+        "description": "가천대학교 및 태평역 인근으로, 가로주택정비사업 및 소규모 재개발이 활발히 진행 중입니다.",
+        "current_price_apt_억": 8.8,
+        "redevelopment_score": 88,
+        "job_proximity_score": 72,
+        "transit_score": 83,
+        "future_outlook_score": 82,
+        "price_trend_2016": 3.8,
+        "price_trend_2018": 5.0,
+        "price_trend_2020": 7.2,
+        "price_trend_2022": 8.0,
+        "price_trend_2024": 8.0,
+        "price_trend_2026": 8.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.118, 37.452],
+          [127.132, 37.452],
+          [127.132, 37.438],
+          [127.118, 37.438],
+          [127.118, 37.452]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "산성동/복정동",
+        "district": "수정구",
+        "description": "8호선 복정역 및 위례 배후지로 복정1지구 개발과 산성구역 재개발 시너지가 큽니다.",
+        "current_price_apt_억": 12.8,
+        "redevelopment_score": 80,
+        "job_proximity_score": 85,
+        "transit_score": 92,
+        "future_outlook_score": 91,
+        "price_trend_2016": 5.2,
+        "price_trend_2018": 7.2,
+        "price_trend_2020": 10.5,
+        "price_trend_2022": 11.5,
+        "price_trend_2024": 11.8,
+        "price_trend_2026": 12.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.122, 37.465],
+          [127.142, 37.465],
+          [127.142, 37.452],
+          [127.122, 37.452],
+          [127.122, 37.465]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "금광동",
+        "district": "중원구",
+        "description": "금광1구역 등 대형 신축 아파트 단지 입주로 거주 여건이 비약적으로 향상되었습니다.",
+        "current_price_apt_억": 9.5,
+        "redevelopment_score": 55,
+        "job_proximity_score": 70,
+        "transit_score": 81,
+        "future_outlook_score": 80,
+        "price_trend_2016": 3.8,
+        "price_trend_2018": 5.2,
+        "price_trend_2020": 8.0,
+        "price_trend_2022": 8.8,
+        "price_trend_2024": 8.8,
+        "price_trend_2026": 9.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.152, 37.452],
+          [127.172, 37.452],
+          [127.172, 37.438],
+          [127.152, 37.438],
+          [127.152, 37.452]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "은행동/상대원동",
+        "district": "중원구",
+        "description": "상대원 2, 3구역 재개발과 은행주공 아파트 재건축이 한창 속도를 내고 있습니다.",
+        "current_price_apt_억": 8.2,
+        "redevelopment_score": 90,
+        "job_proximity_score": 68,
+        "transit_score": 75,
+        "future_outlook_score": 84,
+        "price_trend_2016": 3.4,
+        "price_trend_2018": 4.5,
+        "price_trend_2020": 6.8,
+        "price_trend_2022": 7.4,
+        "price_trend_2024": 7.5,
+        "price_trend_2026": 8.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.152, 37.438],
+          [127.175, 37.438],
+          [127.175, 37.422],
+          [127.152, 37.422],
+          [127.152, 37.438]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "dong_name": "여수동/하대원동",
+        "district": "중원구",
+        "description": "성남시청과 야탑역 사이에 위치하여 쾌적한 주거 인프라를 보이고 있습니다.",
+        "current_price_apt_억": 11.2,
+        "redevelopment_score": 40,
+        "job_proximity_score": 78,
+        "transit_score": 85,
+        "future_outlook_score": 83,
+        "price_trend_2016": 5.2,
+        "price_trend_2018": 6.8,
+        "price_trend_2020": 9.2,
+        "price_trend_2022": 10.2,
+        "price_trend_2024": 10.3,
+        "price_trend_2026": 11.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [127.125, 37.430],
+          [127.150, 37.430],
+          [127.150, 37.418],
+          [127.125, 37.418],
+          [127.125, 37.430]
+        ]]
+      }
+    }
+  ]
+}
